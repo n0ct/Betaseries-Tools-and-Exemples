@@ -6,14 +6,14 @@
  */
  
 	function exception_handler($exception) { 
-		ob_start(); 
+		//ob_start(); 
 		echo '<br/><br /><h1>Warning: exception detected</h1><br/><br /><!--
 		';		
-		print_r($GLOBALS);
+		/*print_r($GLOBALS);
 		echo '
-		'; 
+		';*/ 
 		print_r($exception); 
-		file_put_contents('exceptions.txt', ob_get_clean(). "\n",FILE_APPEND); 
+		//file_put_contents('exceptions.txt', ob_get_clean(). "\n",FILE_APPEND); 
 		echo '
 		-->';
 	}

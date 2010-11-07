@@ -33,8 +33,7 @@
  	$xmlResult_EpisodesToWatch=null;
  	$xmlSeries=null;
 	try {
-		if ($login == constant('SERVER_ACCOUNT')) $xmlResult_EpisodesToWatch=$request->userRequest($login,"members/episodes/vf.xml");
-		else $xmlResult_EpisodesToWatch=$request->userRequest($login,"members/episodes/vf.xml",array("view" => "next"));
+		$xmlResult_EpisodesToWatch=$request->userRequest($login,"members/episodes/vf.xml");
 	}
 	catch (Exception $e)
 	{
@@ -44,29 +43,28 @@
 	//Pour chaque épisode de chaque utilisateur
 	foreach ($xmlResult_EpisodesToWatch->episodes->episode as $episode)
 	{
-		//On évite d'avoir deux fois les même épisode dans le tableau que l'ont génère
-		if (!array_key_exists($episode->url . " " . $episode->episode,$EpisodeArray))
+		//On ne récupère que le premier épisode à voir de chaque série
+		if (trim((string)$episode->url) != trim((string)$oldUrl))
 		{
-			//on ajoute l'épisode au tableau avec l'utilisateur courrant
-			$EpisodeArray[(string)$episode->url . " " . (string)$episode->episode]=array("episode" => $episode,"user" => $login);
-		}
-		else
-		{
-			//on ajoute l'utilisateur à l'épisode
-			$EpisodeArray[(string)$episode->url . " " . (string)$episode->episode]["user"].= " ".$login;
+			//On évite d'avoir deux fois les même épisode dans le tableau que l'ont génère
+			if (!array_key_exists($episode->url . " " . $episode->episode,$EpisodeArray))
+			{
+				//on ajoute l'épisode au tableau avec l'utilisateur courrant
+				$EpisodeArray[(string)$episode->url . " " . (string)$episode->episode]=array("episode" => $episode,"user" => $login);
+			}
+			else
+			{
+				//on ajoute l'utilisateur à l'épisode
+				$EpisodeArray[(string)$episode->url . " " . (string)$episode->episode]["user"].= " ".$login;
+			}
+			//on sauvegarde l'url de l'épisode courrant pour l'itération suivante de la boucle
+			$oldUrl=$episode->url;
 		}
 	}
  }
-
-
-echo "<html><body>
-<!--
-
-";
 //var_dump($EpisodeArray);
-echo "
--->
-<table border=\"0\">
+
+echo "<html><body><table border=\"0\">
 ";
 for($i=count($ACCOUNT_USERS);$i>0;$i--)
 {
@@ -74,9 +72,6 @@ for($i=count($ACCOUNT_USERS);$i>0;$i--)
 	foreach ($EpisodeArray as $episode)
 	{
 		$arrayUsers=preg_split("/ /",$episode["user"]);
-		$seasonAndEpisode=preg_split('/[SE]/',$episode['episode']->episode);
-		$numSeason=$seasonAndEpisode[1];
-		$numEpisode=$seasonAndEpisode[2];
 		$nbUsers=count($arrayUsers);
 		$EpisodeOwned=true;
 		foreach ($arrayUsers as $login)
@@ -98,13 +93,11 @@ for($i=count($ACCOUNT_USERS);$i>0;$i--)
 			echo '<tr>';
 			if ($EpisodeOwned)
 			{
-				echo '<td colspan="2">' .
-						'<img src="../../images/plot_green.gif" alt="Episode T&eacute;l&eacute;charg&eacute;."/></td>';
+				echo '<td colspan="2"><img src="../../images/plot_green.gif" alt="Episode T&eacute;l&eacute;charg&eacute;."/></td>';
 			}
 			else 
 			{
-				echo '<td><a target="_blank" href="http://srv/donnees/betaseries/tests/request/example_watched.php?show='.$episode["episode"]->url.'&season='.$numSeason.'&episode='.$numEpisode.'">' .
-						'<img src="../../images/plot_red.gif" alt="&Eacute;pisode non t&eacute;l&eacute;charg&eacute;."></a></td>'.
+				echo '<td><img src="../../images/plot_red.gif" alt="&Eacute;pisode non t&eacute;l&eacute;charg&eacute;."></td>'.
 				'<td><a href="http://www.filestube.com/search.html?q='.$episode["episode"]->show.'+'.$episode["episode"]->episode.'&select=All&hosting=3,27" target="_blank">' .
 				'<img src="../../images/dl.jpg" width="13" alt="Cliquez i&ccedil;i pour t&eacute;l&eacute;charger l\'&eacute;pisode."/>' .
 				'</a></td>';
@@ -114,9 +107,7 @@ for($i=count($ACCOUNT_USERS);$i>0;$i--)
 			{
 				if ($login != constant('SERVER_ACCOUNT'))
 				{
-					echo $login.' '.
-					'<a target="_blank" href="http://srv/donnees/betaseries/tests/request/example_watched.php?show='.$episode["episode"]->url.'&season='.$numSeason.'&episode='.$numEpisode.'&login='.$login.'">' .
-						'<img src="../../images/plot_red.gif" alt="Marquer l\'&eacute;pisode comme vu"></a>';
+					echo $login.' ';
 				}
 			}
 			echo '</td><td>';
