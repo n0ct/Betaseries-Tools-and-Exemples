@@ -5,22 +5,22 @@
  * Fichier: class_request.php
  * 
  * Cette classe a pour objectif de:
- * -Permettre d'utiliser la classe bétaséries créée par Maxime Valette et de récupérer du xml
- * -De générer des exceptions en cas d'érreurs dans le xml récupéré
- * -De permettre de gérer une multitude d'utilisateurs différents et leurs tokens
- * -De permettre la mise en cache des requettes et des tokens utilisateurs sans pour autant utiliser une base de données
+ * -Permettre d'utiliser la classe bÃ©tasÃ©ries crÃ©Ã©e par Maxime Valette et de rÃ©cupÃ©rer du xml
+ * -De gÃ©nÃ©rer des exceptions en cas d'erreurs dans le xml rÃ©cupÃ©rÃ©
+ * -De permettre de gÃ©rer une multitude d'utilisateurs diffÃ©rents et leurs tokens
+ * -De permettre la mise en cache des requettes et des tokens utilisateurs sans pour autant utiliser une base de donnÃ©es
  * 
- * Elle constitue une couche d'abstraction entre vos scripts et la classe bétaséries de Maxime Valette.
+ * Elle constitue une couche d'abstraction entre vos scripts et la classe bÃ©tasÃ©ries de Maxime Valette.
  */
- //La classe de Maxime valette générant du xml après l'envoie d'une requette à l'API de bétaseries
+ //La classe de Maxime valette gÃ©nÃ©rant du xml aprÃ¨s l'envoie d'une requette Ã  l'API de bÃ©taseries
  require_once(dirname(__FILE__)."/../includes/betaseries/class_betaseries.php");
- //une classe définissant des variables globales
+ //une classe dÃ©finissant des variables globales
  require_once(dirname(__FILE__)."/../config/config_betaseries.php");
  
  class BetaSeriesRequest{
  	
 	/*-----------------------------------*/
- 	/**  nom (sans l'extension) du fichier de cache contenant les utilisateurs enregistrés et leurs token)
+ 	/**  nom (sans l'extension) du fichier de cache contenant les utilisateurs enregistrÃ©s et leurs token)
  	 * 
  	 */
  	private static $CACHE_PATH_USER='users';
@@ -31,19 +31,19 @@
  	private static $instance;
  	
  	/*-----------------------------------*/
- 	/** Instance de la classe BetaSeries créée par Maxime Valette
+ 	/** Instance de la classe BetaSeries crÃ©Ã©e par Maxime Valette
  	 * 
  	 */
  	private $connexion;
  	
  	/*-----------------------------------*/
- 	/** Le tableau des utilisateurs qui se présente sous la forme suivante:
+ 	/** Le tableau des utilisateurs qui se prÃ©sente sous la forme suivante:
  	 * $usersArray=array('login' => array('password' => 'MyPassWord', 'token' => 'MyUserTokenOnTheAPI');
  	 */
  	private $usersArray=array();
  	
  	/*-----------------------------------*/
- 	/** Le modele généré au retour d'une requete
+ 	/** Le modele gÃ©nÃ©rÃ© au retour d'une requete
  	 *
  	 */
  	private $modele;
@@ -51,7 +51,7 @@
  	/*--------Fonctions Statiques--------*/
  	/*-----------------------------------*/
  	/**
- 	 *  getInstance récupère l'instance unique de cette classe
+ 	 *  getInstance rï¿½cupï¿½re l'instance unique de cette classe
  	 *  (Design pattern singleton)
  	 */
  	public static function getInstance()
@@ -63,7 +63,7 @@
  	/*-----------------------------------*/
  	/*--------Fonctions Publiques--------*/
  	/*-----------------------------------*/
- 	/** Fonction permettant d'ajouter un utilisateur, de récupérer son token pour pouvoir faire de futures requettes
+ 	/** Fonction permettant d'ajouter un utilisateur, de rÃ©cupÃ©rer son token pour pouvoir faire de futures requettes
  	 * @param $login le login de l'utilisateur
  	 * @param $password le password de l'utilisateur
  	 */
@@ -72,10 +72,10 @@
  		if (empty($login)) throw new Exception("Login is empty");
  		if (empty($password)) throw new Exception("Password is empty");
  		//TODO getUsersCache();
- 		//Si le tableau ne contient pas déjà l'utilisateur
+ 		//Si le tableau ne contient pas dï¿½jï¿½ l'utilisateur
  		if (!$this->containsUser($login))
  		{
- 			//On Récupère le token de l'utilisateur:':
+ 			//On Rï¿½cupï¿½re le token de l'utilisateur:':
  			$token=$this->getToken($login,$password);
  			if (empty($token)) throw new Exception("Le login ou le password de l'utilisateur est incorrect.'");
  			//On construit l'utilisateur et on l'ajoute au tableau
@@ -87,7 +87,7 @@
  	}
  	
  	/*-----------------------------------*/
- 	/** Fonction permettant de supprimer un utilisateur et le token associé
+ 	/** Fonction permettant de supprimer un utilisateur et le token associï¿½
  	 * @param $login le login de l'utilisateur'
  	 */
  	public function delUser($login)
@@ -103,7 +103,7 @@
  	}
  	
  	/*-----------------------------------*/
- 	/** Vérifie que l'utilisateur est connu de la classe
+ 	/** VÃ©rifie que l'utilisateur est connu de la classe
  	 * (contenu dans le tableau usersArray)
  	 */
  	public function containsUser($login)
@@ -113,7 +113,7 @@
  	}
  	
  	/*-----------------------------------*/
- 	/** Envoie une requete à l'api
+ 	/** Envoie une requete Ã  l'api
  	 * 
  	 */
  	public function request($request,$optionsArray=null,$login=null)
@@ -124,10 +124,10 @@
  		/* if (requestCacheExists($request)) $xml=getRequestCache($request,$login);
  		else */
  		
- 		//Envoie une requette à l'api  et récupere un xml_simple_element
+ 		//Envoie une requette Ã  l'api  et rÃ©cupere un xml_simple_element
  		$xml = $this->connexion->send_request(constant("BETASERIES_API_ADRESS").$request,$optionsArray);
 		
-		//Récupère les erreurs et envoie l'exception correspondante si nécessaire
+		//RÃ©cupÃ¨re les erreurs et envoie l'exception correspondante si nÃ©cessaire
 		
 		// TODO
 		/*try
@@ -145,7 +145,7 @@
   	}
   	
   	/*-----------------------------------*/
-  	/** Envoie une requette propre à un utilisateur.
+  	/** Envoie une requette propre Ã  un utilisateur.
   	 * @param login			le login de l'utilisateur
   	 * @param userRequest	la requete de l'utilisateur http://api.betaseries.com/apropos/api
    	 * @see method request
@@ -164,7 +164,7 @@
  	
  	
  	/*-----------------------------------*/
- 	/*---------Fonction privées----------*/
+ 	/*---------Fonction privÃ©es----------*/
  	/*-----------------------------------*/
  	
  	/*-----------------------------------*/
@@ -177,13 +177,13 @@
  	}
  	
  	/*-----------------------------------*/
- 	/** Génère les exceptions en fonction des codes d'erreurs retournés
+ 	/** GÃ©nÃ©re les exceptions en fonction des codes d'erreurs retournÃ©s
  	 * 
  	 */
  	private function makeExceptions($xml)
  	{
  		$errors=null;
- 		if (empty($xml)) throw new Exception("Aucun retour lors de l'envoie d'une requette à la base de données");
+ 		if (empty($xml)) throw new Exception("Aucun retour lors de l'envoie d'une requette Ã  la base de donnÃ©es");
  		else foreach ($xml->errors->error as $err)
  		{
  			$errors.='Erreur API Betaseries ('.$err->code.')'.$err.'<br />';
@@ -192,7 +192,7 @@
  	}
 
  	/*-----------------------------------*/
- 	/** Récupère le token d'un utilisateur 
+ 	/** RÃ©cupÃ¨re le token d'un utilisateur 
  	 * 
  	 */
  	private function getToken($login,$password)
