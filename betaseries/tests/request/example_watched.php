@@ -38,40 +38,43 @@ else echo "01";
  require_once '../../includes/betaseries/class_betaseries.php';
  require_once '../../metier/class_BetaSeriesRequest.php';
  require_once '../../config/config_betaseries.php';
- $ACCOUNT_USERS=unserialize(constant('ACCOUNT_USERS'));
- 
  $request=BetaSeriesRequest::getInstance();
- $ACCOUNT_USERNAME = null;
- $ACCOUNT_PASSWORD = null;
+ if (!isset($_GET['login'])) $seekedLogin=constant('SERVER_ACCOUNT');
+ else
+ {
+	$ACCOUNT_USERS=unserialize(constant('ACCOUNT_USERS'));
+	
+	$ACCOUNT_USERNAME = null;
+	$ACCOUNT_PASSWORD = null;
+ }
  if (isset($_GET['login'])) $seekedLogin=$_GET['login'];
  else $seekedLogin=constant('SERVER_ACCOUNT');
  foreach ($ACCOUNT_USERS as $login => $password)
  {
- 	if (trim($login) == $seekedLogin)
+ 	if ($login == $seekedLogin)
 	{
 		 $ACCOUNT_USERNAME = $login;
 		 $ACCOUNT_PASSWORD = $password;
+		 break;
 	}
  }
  
  $request=BetaSeriesRequest::getInstance();
  
-echo "<br />Test Utilisateur $login ajout&eacute;: ";
+/*echo "<br />Test Utilisateur $ACCOUNT_USERNAME ajout&eacute;: ";*/
 try{
 	$request->addUser($ACCOUNT_USERNAME,$ACCOUNT_PASSWORD);
 }
 catch(Exception $e)
 {
-	exception_handler($e);
+	echo($e->message());
 }
-echo '<br /> Test ContainsUser apr&egrave;s insertion: '; 
-if($request->containsUser($ACCOUNT_USERNAME)) echo "ok";
-else echo "error";
+if(!$request->containsUser($login)) die("<br />Erreur: l'utilisateur $login n'a pu &ecirc;tre ajout&eacute;. Login ou mot de passe incorrect");
  
  $serie=htmlentities($_GET['show']);
  $season=$_GET['season'];
  $episode=$_GET['episode'];
- echo '<br />Faites clic droit afficher la source pour plus d\'informations.
+ /*echo '<br />Faites clic droit afficher la source pour plus d\'informations.
 
 
 
@@ -91,9 +94,16 @@ try {
  echo '-->
 
 
-';
- $xml=$request->userRequest($ACCOUNT_USERNAME,"members/watched/".$serie.'.xml',array('season' => $season,'episode' =>$episode));
- echo "
+';*/
+ try {
+ 	$xml=$request->userRequest($ACCOUNT_USERNAME,"members/watched/".$serie.'.xml',array('season' => $season,'episode' =>$episode));
+ }
+ catch (Exception $e)
+ {
+ 	die('Erreur fatale: '.$e->message());
+ }
+ echo "<br />Requ&ecirc;te effectu&eacute;e avec succ&egrave;s."
+ /*echo "
  <br />members/watched/".$serie.'.xml?season='.$season.'&episode='.$episode."
  <br />
  ";
@@ -118,4 +128,7 @@ try {
 
 ";
  print_r($xmlResult_EpisodesToWatch);
-?>-->
+ echo '
+ 
+ -->';*/
+?>

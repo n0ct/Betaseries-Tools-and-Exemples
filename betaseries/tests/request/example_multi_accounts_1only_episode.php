@@ -70,6 +70,7 @@ echo "
 ";
 for($i=count($ACCOUNT_USERS);$i>0;$i--)
 {
+	$lastUser=null;
 	$firstEp=true;
 	foreach ($EpisodeArray as $episode)
 	{
@@ -77,8 +78,10 @@ for($i=count($ACCOUNT_USERS);$i>0;$i--)
 		$seasonAndEpisode=preg_split('/[SE]/',$episode['episode']->episode);
 		$numSeason=$seasonAndEpisode[1];
 		$numEpisode=$seasonAndEpisode[2];
+		//Ici on initialise le Nombre d'utilisateur (en comptant le serveur)
 		$nbUsers=count($arrayUsers);
 		$EpisodeOwned=true;
+		$currentUser=null;
 		foreach ($arrayUsers as $login)
 		{
 			if ($login == constant('SERVER_ACCOUNT'))
@@ -87,11 +90,27 @@ for($i=count($ACCOUNT_USERS);$i>0;$i--)
 				$nbUsers--;
 			}
 		}
+		//Ici le $nbUsers ne comprend plus le serveur
+		//Si il n'y a qu'un seul utilisateur on défini $currentUser au login de l'utilisateur courrant.	 
+		if ($nbUser < 2) foreach ($arrayUsers as $login)
+		{
+			if ($login != constant('SERVER_ACCOUNT'))
+			{
+				$currentUser=$login;
+			}
+		}
+		
 		if ($nbUsers != $i) continue;
 		if ($firstEp)
 		{
 			$firstEp=false;
 			echo '<tr><td colspan="7"></td></tr><tr><td colspan="7"><h3>'.$i.' utilisateurs:</h3></td></tr>';
+		}
+		//Si il n'y a qu'un seul utilisateur ET que l'utilisateur de l'episode précédant n'est pas le même que l'utilisateur courant
+		if ($nbUsers<2 && $lastUser!=$currentUser)
+		{
+			//On ajoute le nom de l'utilisateur comme titre.
+			echo '<tr><td colspan="7"></td></tr><tr><td></td><td colspan="6"><h3>'.$currentUser.':</h3></td></tr>';
 		}
 		if ($nbUsers == $i)
 		{
@@ -128,8 +147,10 @@ for($i=count($ACCOUNT_USERS);$i>0;$i--)
 				echo ' <a href="'.$sub->url.'" title="'.$sub->filename.'" target="_blank"><img src="../../images/srt.png" alt="'.$sub->filename.'<br/>provenance: '.$sub->source.'"/></a> ';
 			}
 			echo '</td></tr>
-			';	
+			';
+			$lastUser=$currentUser;
 		}
+		
 	}
 }
 echo "</table></body></html>";
