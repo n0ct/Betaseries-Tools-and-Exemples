@@ -4,9 +4,9 @@
  * Auteur: Benjamin Boulaud
  * Fichier: example_request.php
  */
- require_once '../../includes/betaseries/class_betaseries.php';
- require_once '../../metier/class_BetaSeriesRequest.php';
- require_once '../../config/config_betaseries.php';
+ require_once(dirname(__FILE__).'/../config/config_betaseries.php');
+ require_once(dirname(__FILE__).'/../core/exception/exception_handler.php');
+ require_once(dirname(__FILE__).'/../core/betaseries/class_BetaSeriesRequest.php');
  $ACCOUNT_USERS=unserialize(constant('ACCOUNT_USERS'))
  ?>
  
@@ -35,9 +35,6 @@ else echo "01";
  </form>
  <?
  if (!(isset($_GET['show']) && isset($_GET['season']) && isset($_GET['episode']))) die ("");
- require_once '../../includes/betaseries/class_betaseries.php';
- require_once '../../metier/class_BetaSeriesRequest.php';
- require_once '../../config/config_betaseries.php';
  $request=BetaSeriesRequest::getInstance();
  if (!isset($_GET['login'])) $seekedLogin=constant('SERVER_ACCOUNT');
  else

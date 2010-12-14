@@ -13,9 +13,9 @@
  * Elle constitue une couche d'abstraction entre vos scripts et la classe bétaséries de Maxime Valette.
  */
  //La classe de Maxime valette générant du xml après l'envoie d'une requette à l'API de bétaseries
- require_once(dirname(__FILE__)."/../includes/betaseries/class_betaseries.php");
- //une classe définissant des variables globales
- require_once(dirname(__FILE__)."/../config/config_betaseries.php");
+ require_once(dirname(__FILE__)."/../../includes/betaseries/class_betaseries.php");
+ //une classe définissant des variables globales (au cas où elle n'aurait pas été appellé avant)
+ require_once(dirname(__FILE__)."/../../config/config_betaseries.php");
  
  class BetaSeriesRequest{
  	
@@ -128,26 +128,28 @@
  		if ($request == null) throw new Exception("Request is empty");
  		
  		//TODO
- 		/* if (requestCacheExists($request)) $xml=getRequestCache($request,$login);
- 		else */
+ 		/*
+ 		if (requestCacheExists($request)) $xml=getRequestCache($request,$login,$optionsArray);
+ 		else
+ 		{
+ 		*/
  		
- 		//Envoie une requette à l'api  et récupere un xml_simple_element
- 		$xml = $this->connexion->send_request(constant("BETASERIES_API_ADRESS").$request,$optionsArray);
-		
-		//Récupère les erreurs et envoie l'exception correspondante si nécessaire
-		
-		// TODO
-		/*try
-		{
-			$this->makeExceptions($xml);
+	 		//Envoie une requette à l'api  et récupere un xml_simple_element
+	 		$xml = $this->connexion->send_request(constant("BETASERIES_API_ADRESS").$request,$optionsArray);
+			
+			//TODO Récupère les erreurs et envoie l'exception correspondante si nécessaire 
+			/*try
+			{
+				$this->makeExceptions($xml);
+			}
+			catch (Exception $e)
+			{
+				throw $e;
+			}*/
+			//TODO saveRequestCache($request,$login,$xml,$optionsArray);
+		/*
 		}
-		catch (Exception $e)
-		{
-			throw $e;
-		}*/
-		
-		//TODO saveRequestCache($request,$login,$xml);
-		
+		*/
 		return $xml;
   	}
   	
@@ -231,29 +233,30 @@
  	/*-----------------------------------*/
  	/*-- GESTION DU CACHE D'UNE REQUETE -*/
  	/*-----------------------------------*/
- 	private function saveRequestCache($request,$login,$xml)
+ 	private function saveRequestCache($request,$login,$xml,$optionsArray)
  	{
- 	    saveCache(makeRequestPath($request,$login),serialize($xml));
+ 	    saveCache(makeRequestPath($request,$login,$optionsArray),$xml);
  	}
- 	private function delRequestCache($request,$login)
+ 	private function delRequestCache($request,$login,$optionsArray)
  	{
- 		delCache(makeRequestPath($request,$login));
+ 		delCache(makeRequestPath($request,$login,$optionsArray));
  	}
- 	private function requestCacheExists($request,$login)
+ 	private function requestCacheExists($request,$login,$optionsArray)
  	{
- 		return cacheExists(makeRequestPath($request,$login));
+ 		return cacheExists(makeRequestPath($request,$login,$optionsArray));
  	}
- 	private function getRequestCache($request,$login)
+ 	private function getRequestCache($request,$login,$optionsArray)
  	{
- 		$r=makeRequestPath($request,$login);
+ 		$r=makeRequestPath($request,$login,$optionsArray);
  		if (cacheExists($r)) return unserialize(getCache($r));
  		else return null;
  	}
- 	private function makeRequestPath($request,$login)
+ 	private function makeRequestPath($request,$login,$optionsArray)
  	{
  		$r="";
  		if ($login!=null) $r.= $login.'-';
  		$r.=$request;
+ 		//TODO $optionsArray
  		return $r;
  	}
  	/*-----------------------------------*/
@@ -262,7 +265,13 @@
  	//TODO
  	private function saveCache($file,$content)
  	{
-
+		/*//Si le repertoire du fichier n'existe pas on le crée.
+		if (!$resultat = DonneeCache::obtenirDonnee('Groupe', 'IdUnique'))
+		{		        
+		        DonneeCache::ecrireDonnee($file, md5($file), 3600, $content);
+		}*/
+			
+		
  	}
  	//TODO
 	private function delCache($file)
@@ -277,7 +286,7 @@
  	//TODO
 	private function cacheExists($file)
  	{
- 		
+ 		//if ($resultat = DonneeCache::obtenirDonnee('Groupe', 'IdUnique')
  	}
  }
 ?>

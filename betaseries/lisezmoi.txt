@@ -1,0 +1,11 @@
+Bonjour,
+
+J'en ai mare de faire de la doc donc on va faire dans l'originalité:
+
+Si vous n'avez pas de problème d'interface chaise-clavier tout devrait être assez simple à configurer.
+Pour mettre la solution en place il vous suffit d'éditer le fichier "/multiUsers/config/config_betaseries.php".
+
+Flème d'aller plus avant dans des explications à la mormoilneux alors si vous avez des questions => google group !
+
+Benjamin Boulaud
+=> ben.nbld@gmail.com
